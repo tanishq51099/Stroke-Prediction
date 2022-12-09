@@ -40,7 +40,7 @@ A stroke, sometimes called a "brain attack," occurs when blood flow to an area i
 The brain cells, deprived of the oxygen and glucose needed to survive, die. If a stroke is not caught early, permanent brain damage or death can result.
 This app is designed to predict the probability and likeliness of getting a stroke to a person by performing **Classification** on the Stroke data.
 It is said that up to 50% of all strokes are preventable and many risk factors can be controlled before they cause problems if detected early.
-* **Python libraries:** Pandas, Streamlit, Numpy, Matplotlib, Seaborn, Scikit Learn
+* **Python libraries:** Pandas, Streamlit, Numpy, Matplotlib, Scikit Learn
 * **Data source:** [Stroke Prediction Data](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset).
 """)
 
@@ -64,7 +64,7 @@ st.markdown("""
     There was some missingness in the Body Mass Index (bmi) column of the dataset and upon observing the relationship with other columns 
     it was found that bmi had some correlation with the age of patient. 
     So, the KNN imputer was used considering only the age of the patient.
-    The data was also scaled using the Standard Scalar function.
+    The data was also scaled using the Standard Scalar function. One hot encoding was also used for categorical features.
     """)
 
 st.text("")
@@ -83,6 +83,7 @@ def user_input_features():
     age = st.sidebar.slider('Enter your Age', 0, 82, 60, step=1)
     bmi = st.sidebar.number_input('Enter your Body Mass Index', 5.0, 97.6, 36.6, step=0.1)
     eval_bmi  = st.sidebar.checkbox("Don't know your bmi? Click here to know.")
+
     if eval_bmi:
     	weight = st.sidebar.number_input('Enter your weight (in Kgs)',0.0,200.0,1.0)
     	height = st.sidebar.number_input('Enter your height (in meters)',0.0,200.0,0.5)
@@ -99,11 +100,17 @@ def user_input_features():
     	hypertension = 1
     else:
     	hypertension = 0    
+    temp2 = st.sidebar.radio("Are you Married?",("Yes","No"))
+    if temp2 == "Yes":
+    	m = 1
+    else:
+    	m = 0
 
     data = {'age': age,
             'bmi': bmi,
             'heart_disease':h,
-            'hypertension': hypertension}
+            'hypertension': hypertension,
+            'ever_married':m}
 
     features = pd.DataFrame(data, index=[1])
     return features
@@ -120,7 +127,7 @@ a.gender = le.fit_transform(a.gender)
 a.ever_married = le.fit_transform(a.ever_married)
 a.work_type = le.fit_transform(a.work_type)
 a.Residence_type = le.fit_transform(a.Residence_type)
-X = a[["age","bmi","heart_disease","hypertension"]]
+X = a[["age","bmi","heart_disease","hypertension","ever_married"]]
 y = a[["stroke"]]
 
 my_scaler = StandardScaler()
@@ -133,8 +140,8 @@ with tab1:
 	st.header("K Neighbors Classifier")
 	predict = st.checkbox("Want to predict? Click here.",key=1000)
 	if predict:
-   		st.subheader('User Input parameters')
-   		st.write(df_new)
+   		# st.subheader('User Input parameters')
+   		# st.write(df_new)
    		knn = neighbors.KNeighborsClassifier(n_neighbors=2, weights='uniform')
    		knn.fit(X_scaled, y)
    		prediction = knn.predict(df_new)
@@ -227,8 +234,8 @@ with tab2:
    	st.header("SVM Classifier")
    	predict = st.checkbox("Want to predict? Click here.",key=2000)
    	if predict:
-   		st.subheader('User Input parameters')
-   		st.write(df_new)
+   		# st.subheader('User Input parameters')
+   		# st.write(df_new)
    		svm_model = svm.SVC(probability = True)
    		svm_model.fit(X_scaled, y)
    		prediction2 = svm_model.predict(df_new)
@@ -312,8 +319,8 @@ with tab3:
 	st.header("Random Forest Classifier")
 	predict = st.checkbox("Want to predict? Click here.",key=3000)
 	if predict:
-		st.subheader('User Input parameters')
-		st.write(df_new)
+		# st.subheader('User Input parameters')
+		# st.write(df_new)
 		model3 = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)
 		model3.fit(X_scaled, y)
 		prediction3 = model3.predict(df_new)
@@ -398,8 +405,8 @@ with tab4:
    	st.header("Decision Tree")
    	predict = st.checkbox("Want to predict? Click here.",key=4000)
    	if predict:
-   		st.subheader('User Input parameters')
-   		st.write(df_new)
+   		# st.subheader('User Input parameters')
+   		# st.write(df_new)
    		model4 = DecisionTreeClassifier(max_depth=5)
    		model4.fit(X_scaled, y)
    		prediction4 = model4.predict(df_new)
@@ -485,8 +492,8 @@ with tab5:
 	st.header("Gaussian Naive Bayes")
 	predict = st.checkbox("Want to predict? Click here.",key=5000)
 	if predict:
-   		st.subheader('User Input parameters')
-   		st.write(df_new)
+   		# st.subheader('User Input parameters')
+   		# st.write(df_new)
    		model5 = GaussianNB()
    		model5.fit(X_scaled, y)
    		prediction5 = model5.predict(df_new)
@@ -571,8 +578,8 @@ with tab6:
    	st.header("Multi-layer Perceptron Classifier")
    	predict = st.checkbox("Want to predict? Click here.",key=6000)
    	if predict:
-   		st.subheader('User Input parameters')
-   		st.write(df_new)
+   		# st.subheader('User Input parameters')
+   		# st.write(df_new)
    		model6 = MLPClassifier(alpha=1, max_iter=1000)
    		model6.fit(X_scaled, y)
    		prediction6 = model6.predict(df_new)
